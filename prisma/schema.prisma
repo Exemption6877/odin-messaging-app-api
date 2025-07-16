@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User{
+  id Int @id @default(autoincrement())
+  username String @unique 
+  email String @unique
+  password String
+  author Message[] @relation("Author")
+  receiver Message[] @relation("Receiver")
+  groups Group[]
+
+  status Status @default(ONLINE)
+  role Role @default(USER)
+
+  friends   User[]   @relation("UserFriends")
+  friendOf  User[]   @relation("UserFriends")
+}
+
+model Message {
+  id Int @id @default(autoincrement())
+  text String
+  image String?
+
+  authorId Int
+  author User @relation("Author", fields: [authorId], references: [id])
+
+  receiverId Int?
+  receiver User? @relation("Receiver", fields: [receiverId], references: [id])
+
+  groupId Int?
+  group Group? @relation(fields: [groupId], references: [id])
+
+}
+
+model Group {
+  id Int @id @default(autoincrement())
+  title String
+  users User[]
+  messages Message[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Status {
+  ONLINE
+  OFFLINE
+}
