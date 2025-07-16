@@ -1,0 +1,25 @@
+{
+  "name": "odin-messaging-app-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Exemption6877/odin-messaging-app-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Exemption6877/odin-messaging-app-api/issues"
+  },
+  "homepage": "https://github.com/Exemption6877/odin-messaging-app-api#readme",
+  "dependencies": {
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0"
+  }
+}
