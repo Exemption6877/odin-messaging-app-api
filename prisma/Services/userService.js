@@ -1,5 +1,7 @@
 const prisma = require("../prisma");
 
+// Add two services to find user with either email or username for signup
+
 async function signUp(user) {
   try {
     return await prisma.user.create({
@@ -14,7 +16,7 @@ async function signUp(user) {
   }
 }
 
-async function logIn(user) {
+async function findByEmail(user) {
   try {
     return await prisma.user.findUnique({ where: { email: user.email } });
   } catch (err) {
@@ -22,4 +24,4 @@ async function logIn(user) {
   }
 }
 
-module.exports = { signUp, logIn };
+module.exports = { signUp, findByEmail };

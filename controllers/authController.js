@@ -3,6 +3,9 @@ const db = require("../prisma/queries");
 async function signUp(req, res) {
   try {
     const { email, username, password } = req.body;
+
+    // Add check for existing user!
+
     const userInput = {
       email,
       username,
@@ -23,14 +26,14 @@ async function logIn(req, res) {
     const { email, password } = req.body;
     const userInput = { email, password };
 
-    const data = await db.user.logIn(userInput);
+    const data = await db.user.findByEmail(userInput);
 
     if (!data) {
       return res.status(404).json({ error: "User not found" });
     }
 
     if (data.password !== userInput.password) {
-      return res.status(403).json({ error: "Credentials are incorrect" });
+      return res.status(403).json({ error: "Incorrect password" });
     }
 
     res.status(200).json({ message: "Login successful" });
