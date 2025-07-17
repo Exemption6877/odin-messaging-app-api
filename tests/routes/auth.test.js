@@ -2,7 +2,7 @@ const app = require("../../app");
 const prisma = require("../../prisma/prisma");
 const request = require("supertest");
 
-describe("Basic /signup & /login", () => {
+describe("Sign Up & Login", () => {
   const user = {
     username: "tester",
     email: "test@tester.com",
@@ -39,7 +39,7 @@ describe("Basic /signup & /login", () => {
   });
 });
 
-describe("/signup User input validation", () => {
+describe("Sign Up User input validation", () => {
   const testers = [
     {
       username: "validator0",
@@ -172,7 +172,7 @@ describe("/signup User input validation", () => {
   });
 });
 
-describe("/login status validation", () => {
+describe("Login status validation", () => {
   const testers = [
     {
       username: "tester",
@@ -223,7 +223,7 @@ describe("/login status validation", () => {
   });
 });
 
-describe("/signup status validation", () => {
+describe("Sign Up status validation", () => {
   const testers = [
     {
       username: "ialreadyexist",
@@ -278,4 +278,18 @@ describe("/signup status validation", () => {
     await prisma.user.deleteMany({ where: { email: testers[0].email } });
     await prisma.user.deleteMany({ where: { email: testers[1].email } });
   });
+});
+
+// Implement github auth
+// Handle all of it with /logout route
+// Verify with /verification ?
+
+describe("Log Out general testing", () => {
+  test("JWT invalid after logout", () => {});
+});
+
+describe("JWT Token", () => {
+  test("JWT invalid after email update", () => {});
+  test("JWT invalid after password update", () => {});
+  test("JWT invalid after username update", () => {});
 });
