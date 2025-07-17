@@ -4,15 +4,23 @@ async function signUp(req, res) {
   try {
     const { email, username, password } = req.body;
 
-    // Add check for existing user!
-
-    const userInput = {
+    const inputData = {
       email,
       username,
       password,
     };
 
-    const data = await db.user.signUp(userInput);
+    const emailCheck = await db.user.findByEmail(email);
+    if (emailCheck) {
+      return res.status(403).json({ error: "Email has been already taken" });
+    }
+
+    const usernameCheck = await db.user.findByUsername(username);
+    if (usernameCheck) {
+      return res.status(403).json({ error: "Username has been already taken" });
+    }
+
+    const data = await db.user.signUp(inputData);
     delete data.password;
 
     res.status(201).json(data);
@@ -26,7 +34,7 @@ async function logIn(req, res) {
     const { email, password } = req.body;
     const userInput = { email, password };
 
-    const data = await db.user.findByEmail(userInput);
+    const data = await db.user.findByEmail(email);
 
     if (!data) {
       return res.status(404).json({ error: "User not found" });

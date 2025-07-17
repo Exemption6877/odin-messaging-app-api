@@ -16,12 +16,20 @@ async function signUp(user) {
   }
 }
 
-async function findByEmail(user) {
+async function findByEmail(email) {
   try {
-    return await prisma.user.findUnique({ where: { email: user.email } });
+    return await prisma.user.findUnique({ where: { email } });
   } catch (err) {
-    throw new Error(`DB: could not find user. Error:${err}`);
+    throw new Error(`DB: could not find user by email. Error:${err}`);
   }
 }
 
-module.exports = { signUp, findByEmail };
+async function findByUsername(username) {
+  try {
+    return await prisma.user.findUnique({ where: { username } });
+  } catch (err) {
+    throw new Error(`DB: could not find user by username. Error:${err}`);
+  }
+}
+
+module.exports = { signUp, findByEmail, findByUsername };

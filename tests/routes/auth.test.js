@@ -226,8 +226,8 @@ describe("Login status validation", () => {
 describe("Sign Up status validation", () => {
   const testers = [
     {
-      username: "ialreadyexist",
-      email: "first@exist.com",
+      username: "existingusername",
+      email: "existing@mail.com",
       password: "longpassword",
     },
     {
@@ -236,42 +236,42 @@ describe("Sign Up status validation", () => {
       password: "longpassword",
     },
     {
-      username: "ialreadyexist",
+      username: "existingusername",
       email: "second@exist.com",
       password: "longpassword",
     },
     {
       username: "secondname",
-      email: "first@notexisting.com",
+      email: "existing@mail.com",
       password: "longpassword",
     },
   ];
 
   beforeAll(async () => {
-    await prisma.user.create(testers[0]);
-    await prisma.user.create(testers[1]);
+    await prisma.user.create({ data: testers[0] });
+    await prisma.user.create({ data: testers[1] });
   });
 
   test("Username has been taken", async () => {
     const res = await request(app)
       .post("/auth/signup")
-      .send(testers[0])
+      .send(testers[2])
       .set("Accept", "application/json")
       .expect("Content-type", /json/)
       .expect(403);
 
-    expect(res.body.error).toBe("User already exists.");
+    expect(res.body.error).toBe("Username has been already taken");
   });
 
   test("Email has been taken", async () => {
     const res = await request(app)
       .post("/auth/signup")
-      .send(testers[1])
+      .send(testers[3])
       .set("Accept", "application/json")
       .expect("Content-type", /json/)
       .expect(403);
 
-    expect(res.body.error).toBe("Email has been taken");
+    expect(res.body.error).toBe("Email has been already taken");
   });
 
   afterAll(async () => {
