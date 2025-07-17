@@ -1,4 +1,5 @@
 const db = require("../prisma/queries");
+const { validationResult } = require("express-validator");
 
 async function signUp(req, res) {
   try {
@@ -9,6 +10,12 @@ async function signUp(req, res) {
       username,
       password,
     };
+
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      return res.status(400).json({ errors: result.array() });
+    }
 
     const emailCheck = await db.user.findByEmail(email);
     if (emailCheck) {
