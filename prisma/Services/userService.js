@@ -16,6 +16,14 @@ async function signUp(user) {
   }
 }
 
+async function findById(id) {
+  try {
+    return await prisma.user.findUnique({ id });
+  } catch (err) {
+    throw new Error(`DB: could not find user by id. Error:${err}`);
+  }
+}
+
 async function findByEmail(email) {
   try {
     return await prisma.user.findUnique({ where: { email } });
@@ -32,4 +40,4 @@ async function findByUsername(username) {
   }
 }
 
-module.exports = { signUp, findByEmail, findByUsername };
+module.exports = { signUp, findById, findByEmail, findByUsername };
