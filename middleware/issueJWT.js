@@ -7,7 +7,7 @@ function issueToken(user) {
 
   const token = jwt.sign(payload, JWT_KEY, { expiresIn: "24h" });
 
-  return token;
+  return "Bearer " + token;
 }
 
 module.exports = issueToken;

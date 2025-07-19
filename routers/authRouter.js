@@ -4,6 +4,7 @@ const { body } = require("express-validator");
 const authRouter = Router();
 const authController = require("../controllers/authController");
 const passport = require("passport");
+const issueToken = require("../middleware/issueJWT");
 
 authRouter.post(
   "/signup",
@@ -25,7 +26,9 @@ authRouter.post("/login", (req, res, next) => {
       return res.status(400).json({ error: "Incorrect credentials" });
     }
 
-    return res.status(200).json({ message: "Login successful" });
+    const token = issueToken(user);
+
+    return res.status(200).json({ message: "Login successful", token });
   })(req, res, next);
 });
 

@@ -1,5 +1,8 @@
 const db = require("../prisma/queries");
 const { validationResult } = require("express-validator");
+const bcrypt = require("bcrypt");
+
+const saultRounds = 10;
 
 async function signUp(req, res) {
   try {
@@ -8,7 +11,7 @@ async function signUp(req, res) {
     const inputData = {
       email,
       username,
-      password,
+      password: await bcrypt.hash(password, saultRounds),
     };
 
     const result = validationResult(req);
@@ -47,7 +50,9 @@ async function logIn(req, res) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    if (data.password !== userInput.password) {
+    const isMatch = await bcrypt.compare(userInput.password, data.password);
+
+    if (!isMatch) {
       return res.status(403).json({ error: "Incorrect password" });
     }
 

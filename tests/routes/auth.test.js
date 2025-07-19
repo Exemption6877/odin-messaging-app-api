@@ -280,10 +280,6 @@ describe("Sign Up status validation", () => {
   });
 });
 
-// Implement github auth
-// Handle all of it with /logout route
-// Verify with /verification ?
-
 describe("JWT handling", () => {
   const user = {
     username: "jwt_tester",
@@ -291,7 +287,10 @@ describe("JWT handling", () => {
     password: "576334ddS",
   };
   beforeAll(async () => {
-    await prisma.user.create({ data: { user } });
+    await request(app)
+      .post("/auth/signup")
+      .send(user)
+      .set("Accept", "application/json");
   });
 
   test("JWT is assigned on login", async () => {
@@ -302,19 +301,11 @@ describe("JWT handling", () => {
       .expect("Content-type", /json/)
       .expect(200);
 
-    expect(typeof res.body.jwt).toBe("String");
-    expect(res.body.jwt.length).toBeGreaterThan(0);
+    expect(typeof res.body.token).toBe("string");
+    expect(res.body.token.length).toBeGreaterThan(0);
   });
-  test("JWT invalid after logout", () => {});
 
   afterAll(async () => {
     await prisma.user.deleteMany({ where: { email: user.email } });
   });
-});
-
-// To user
-describe("JWT Token", () => {
-  test("JWT invalid after email update", () => {});
-  test("JWT invalid after password update", () => {});
-  test("JWT invalid after username update", () => {});
 });

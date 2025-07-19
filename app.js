@@ -37,6 +37,28 @@ passport.use(
   )
 );
 
+passport.use(
+  new JwtStrategy(
+    {
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: process.env.JWT_KEY,
+    },
+    async (jwt_payload, done) => {
+      try {
+        const user = await db.user.findById(jwt_payload.id);
+
+        if (!user) {
+          return done(null, false);
+        }
+
+        done(null, user);
+      } catch (err) {
+        done(err, false);
+      }
+    }
+  )
+);
+
 app.get("/", (req, res) => {
   res.json({ name: "main route" });
 });
