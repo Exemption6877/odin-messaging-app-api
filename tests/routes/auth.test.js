@@ -1,6 +1,9 @@
 const app = require("../../app");
 const prisma = require("../../prisma/prisma");
 const request = require("supertest");
+const bcrypt = require("bcrypt");
+
+const saltRounds = 10;
 
 describe("Sign Up & Login", () => {
   const user = {
@@ -188,13 +191,10 @@ describe("Login status validation", () => {
   ];
 
   beforeAll(async () => {
-    await prisma.user.create({
-      data: {
-        username: testers[0].username,
-        email: testers[0].email,
-        password: testers[0].password,
-      },
-    });
+    await request(app)
+      .post("/auth/signup")
+      .send(testers[0])
+      .set("Accept", "application/json");
   });
 
   test("User does not exist", async () => {
@@ -203,8 +203,8 @@ describe("Login status validation", () => {
       .send(testers[1])
       .set("Accept", "application/json")
       .expect("Content-type", /json/)
-      .expect(404);
-    expect(res.body.error).toBe("User not found");
+      .expect(400);
+    expect(res.body.error).toBe("Incorrect credentials");
   });
 
   test("Incorrect password", async () => {
@@ -213,9 +213,9 @@ describe("Login status validation", () => {
       .send({ ...testers[0], password: "incorrectpassword" })
       .set("Accept", "application/json")
       .expect("Content-type", /json/)
-      .expect(403);
+      .expect(400);
 
-    expect(res.body.error).toBe("Incorrect password");
+    expect(res.body.error).toBe("Incorrect credentials");
   });
 
   afterAll(async () => {
@@ -284,10 +284,35 @@ describe("Sign Up status validation", () => {
 // Handle all of it with /logout route
 // Verify with /verification ?
 
-describe("Log Out general testing", () => {
+describe("JWT handling", () => {
+  const user = {
+    username: "jwt_tester",
+    email: "jwt_tester@tester.com",
+    password: "576334ddS",
+  };
+  beforeAll(async () => {
+    await prisma.user.create({ data: { user } });
+  });
+
+  test("JWT is assigned on login", async () => {
+    const res = await request(app)
+      .post("/auth/login")
+      .send(user)
+      .set("Accept", "application/json")
+      .expect("Content-type", /json/)
+      .expect(200);
+
+    expect(typeof res.body.jwt).toBe("String");
+    expect(res.body.jwt.length).toBeGreaterThan(0);
+  });
   test("JWT invalid after logout", () => {});
+
+  afterAll(async () => {
+    await prisma.user.deleteMany({ where: { email: user.email } });
+  });
 });
 
+// To user
 describe("JWT Token", () => {
   test("JWT invalid after email update", () => {});
   test("JWT invalid after password update", () => {});
