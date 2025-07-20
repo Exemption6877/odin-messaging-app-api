@@ -33,7 +33,7 @@ model Profile {
   id Int @id @default(autoincrement())
   desc String?
   pfp String?
-  status String?
+  status_msg String?
 
   user User  @relation(fields:[userId], references: [id])
   userId Int @unique
