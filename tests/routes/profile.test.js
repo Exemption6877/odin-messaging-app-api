@@ -4,11 +4,12 @@ const request = require("supertest");
 
 describe("General route tests", () => {
   test("GET /profile route is working", async () => {
-    await request(app)
-      .get("/profile")
+    const res = await request(app)
+      .get("/profile/1337")
       .set("Accept", "application/json")
       .expect("Content-type", /json/)
-      .expect(403);
+      .expect(404);
+    expect(res.body.error).toBe("Profile not found");
   });
 });
 
@@ -21,9 +22,10 @@ describe("Methods & Token security", () => {
 
   const userProfile = {
     desc: "Random description",
-    status: "Random status",
+    status_msg: "Random status_msg",
   };
   let regUser;
+  let API_URL;
   beforeAll(async () => {
     const testUser = await request(app)
       .post("/auth/signup")
@@ -38,9 +40,8 @@ describe("Methods & Token security", () => {
       email: result.email,
       token: result.token,
     };
+    API_URL = `/profile/${regUser.id}`;
   });
-
-  const API_URL = `/profile/${regUser.id}`;
 
   // Without pfp
   test("POST", async () => {
@@ -52,7 +53,7 @@ describe("Methods & Token security", () => {
       .expect(201);
 
     expect(res.body.desc).toBe("Random description");
-    expect(res.body.status).toBe("Random status");
+    expect(res.body.status_msg).toBe("Random status_msg");
   });
 
   test("GET with Token", async () => {
@@ -62,8 +63,10 @@ describe("Methods & Token security", () => {
       .set("Accept", "application/json")
       .expect(200);
 
+    expect(res.body.username).toBe("tester");
+    expect(res.body.status).toBe("ONLINE");
     expect(res.body.desc).toBe("Random description");
-    expect(res.body.status).toBe("Random status");
+    expect(res.body.status_msg).toBe("Random status_msg");
   });
 
   test("GET without Token", async () => {
@@ -73,7 +76,7 @@ describe("Methods & Token security", () => {
       .expect(200);
 
     expect(res.body.desc).toBe("Random description");
-    expect(res.body.status).toBe("Random status");
+    expect(res.body.status_msg).toBe("Random status_msg");
   });
 
   test("UPDATE", async () => {
@@ -81,11 +84,11 @@ describe("Methods & Token security", () => {
       .put(API_URL)
       .set("Authorization", regUser.token)
       .set("Accept", "application/json")
-      .send({ desc: "Updated description", status: "Updated status" })
+      .send({ desc: "Updated description", status_msg: "Updated status_msg" })
       .expect(200);
 
     expect(res.body.desc).toBe("Updated description");
-    expect(res.body.status).toBe("Updated status");
+    expect(res.body.status_msg).toBe("Updated status_msg");
   });
 
   afterAll(async () => {
