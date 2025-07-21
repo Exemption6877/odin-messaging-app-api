@@ -2,6 +2,8 @@ const app = require("../../app");
 const prisma = require("../../prisma/prisma");
 const request = require("supertest");
 
+// need getAll users for lists, partial match of names
+
 describe("General route tests", () => {
   test("GET /profile route is working", async () => {
     const res = await request(app)
