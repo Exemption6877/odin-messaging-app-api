@@ -59,7 +59,7 @@ passport.use(
   )
 );
 
-
+// Routes
 
 app.get("/", (req, res) => {
   res.json({ name: "main route" });
@@ -68,5 +68,9 @@ app.get("/", (req, res) => {
 const authRouter = require("./routers/authRouter");
 
 app.use("/auth", authRouter);
+
+const profileRouter = require("./routers/profileRouter");
+
+app.use("/profile", profileRouter);
 
 module.exports = app;
