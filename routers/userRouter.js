@@ -7,6 +7,14 @@ const verifyToken = require("../middleware/verifyToken");
 
 const userController = require("../controllers/userController");
 
+// Current plan
+
+const profileRouter = require("./profileRouter");
+
+userRouter.use("/:userId/profile", profileRouter);
+// userRouter.use("/:userId/message", messageRouter);
+// userRouter.use("/:userId/group", groupRouter)
+
 userRouter.get(
   "/:userId",
   passport.authenticate("jwt", { session: false }),

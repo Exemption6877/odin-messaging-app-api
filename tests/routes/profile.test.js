@@ -7,7 +7,7 @@ const request = require("supertest");
 describe("General route tests", () => {
   test("GET /profile route is working", async () => {
     const res = await request(app)
-      .get("/profile/1337")
+      .get("/user/1/profile/")
       .set("Accept", "application/json")
       .expect("Content-type", /json/)
       .expect(404);

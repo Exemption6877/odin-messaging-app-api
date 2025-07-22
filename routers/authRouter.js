@@ -15,7 +15,7 @@ authRouter.post(
   ],
   authController.signUp
 );
-// authRouter.post("/login", authController.logIn);
+
 authRouter.post("/login", (req, res, next) => {
   passport.authenticate("local", { session: false }, (err, user, info) => {
     if (err) {

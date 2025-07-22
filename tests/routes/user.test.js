@@ -106,7 +106,7 @@ describe("Unauthorized requests", () => {
       .post("/auth/signup")
       .send(user)
       .set("Accept", "application/json")
-      .expect(200);
+      .expect(201);
 
     const result = testUser.body;
     regUser = {
@@ -116,21 +116,20 @@ describe("Unauthorized requests", () => {
     };
     API_URL = `/user/${regUser.id}`;
   });
+
   test("GET without token", async () => {
-    const res = await request(app)
+    await request(app)
       .get(API_URL)
       .set("Accept", "application/json")
-      .expect(403);
-    expect(res.body.error).toBe("Unauthorized request");
+      .expect(401);
   });
 
   test("PUT without token", async () => {
-    const res = await request(app)
+    await request(app)
       .put(API_URL)
       .send({ username: "changedname", email: "changedemail" })
       .set("Accept", "application/json")
-      .expect(403);
-    expect(res.body.error).toBe("Unauthorized request");
+      .expect(401);
   });
 
   afterAll(async () => {

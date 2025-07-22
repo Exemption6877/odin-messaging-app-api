@@ -1,8 +1,8 @@
 const { Router } = require("express");
 
-const profileRouter = Router();
+const profileRouter = Router({ mergeParams: true });
 const profileController = require("../controllers/profileController");
 
-profileRouter.get("/:profileId", profileController.getProfile);
+profileRouter.get("/", profileController.getProfile);
 
 module.exports = profileRouter;

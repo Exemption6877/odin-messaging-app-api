@@ -2,9 +2,9 @@ const db = require("../prisma/queries");
 
 async function getProfile(req, res) {
   try {
-    const profileId = Number(req.params.profileId);
+    const userId = Number(req.params.userId);
 
-    const data = await db.profile.findById(profileId);
+    const data = await db.profile.findById(userId);
 
     if (!data) {
       return res.status(404).json({ error: "Profile not found" });
@@ -16,4 +16,12 @@ async function getProfile(req, res) {
   }
 }
 
-module.exports = { getProfile };
+async function postProfile(req, res) {
+  try {
+    const { desc, status_msg, pfp, userId } = req.body;
+  } catch (err) {
+    res.status(500).json({ error: "Could not create profile" });
+  }
+}
+
+module.exports = { getProfile, postProfile };

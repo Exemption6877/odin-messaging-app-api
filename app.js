@@ -69,10 +69,6 @@ const authRouter = require("./routers/authRouter");
 
 app.use("/auth", authRouter);
 
-const profileRouter = require("./routers/profileRouter");
-
-app.use("/profile", profileRouter);
-
 const userRouter = require("./routers/userRouter");
 
 app.use("/user", userRouter);
