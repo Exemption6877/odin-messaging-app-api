@@ -34,4 +34,19 @@ async function createProfile(profile) {
   }
 }
 
-module.exports = { findById, createProfile };
+async function updateProfile(profile) {
+  try {
+    return await prisma.profile.update({
+      where: { userId: profile.userId },
+      data: {
+        desc: profile.desc,
+        status_msg: profile.status_msg,
+        pfp: profile.pfp,
+      },
+    });
+  } catch (err) {
+    throw new Error(`DB: could not update profile. Error:${err}`);
+  }
+}
+
+module.exports = { findById, createProfile, updateProfile };

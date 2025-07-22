@@ -11,4 +11,10 @@ profileRouter.post(
   profileController.postProfile
 );
 
+profileRouter.put(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  profileController.updateProfile
+);
+
 module.exports = profileRouter;

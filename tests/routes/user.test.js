@@ -43,7 +43,7 @@ describe("Methods", () => {
 
   test("GET by ID", async () => {
     const res = await request(app)
-      .get(`${API_URL}`)
+      .get(API_URL)
       .set("Authorization", regUser.token)
       .set("Accept", "application/json")
       .expect(200);

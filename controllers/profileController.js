@@ -36,4 +36,25 @@ async function postProfile(req, res) {
   }
 }
 
-module.exports = { getProfile, postProfile };
+async function updateProfile(req, res) {
+  try {
+    const { desc, status_msg, pfp } = req.body;
+    const userId = Number(req.params.userId);
+
+    const prev = await db.profile.findById(userId);
+
+    const parseData = {
+      desc: desc || prev.desc,
+      status_msg: status_msg || prev.status_msg,
+      pfp: pfp || prev.pfp,
+      userId: userId,
+    };
+
+    const result = await db.profile.updateProfile(parseData);
+    res.status(201).json(result);
+  } catch (err) {
+    res.status(500).json({ error: "Could not update profile" });
+  }
+}
+
+module.exports = { getProfile, postProfile, updateProfile };

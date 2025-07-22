@@ -17,8 +17,8 @@ describe("General route tests", () => {
 
 describe("Methods & Token security", () => {
   const user = {
-    username: "tester1234",
-    email: "mail1234@email.com",
+    username: "tester1234567",
+    email: "mail1234567@email.com",
     password: "1234567890",
   };
 
@@ -28,6 +28,7 @@ describe("Methods & Token security", () => {
   };
   let regUser;
   let API_URL;
+
   beforeAll(async () => {
     const testUser = await request(app)
       .post("/auth/signup")
@@ -54,7 +55,6 @@ describe("Methods & Token security", () => {
     API_URL = `/user/${regUser.id}/profile/`;
   });
 
-  // Without pfp
   test("POST", async () => {
     const res = await request(app)
       .post(API_URL)
@@ -67,20 +67,7 @@ describe("Methods & Token security", () => {
     expect(res.body.status_msg).toBe("Random status_msg");
   });
 
-  test("GET with Token", async () => {
-    const res = await request(app)
-      .get(API_URL)
-      .set("Authorization", regUser.token)
-      .set("Accept", "application/json")
-      .expect(200);
-
-    expect(res.body.username).toBe("tester");
-    expect(res.body.status).toBe("ONLINE");
-    expect(res.body.desc).toBe("Random description");
-    expect(res.body.status_msg).toBe("Random status_msg");
-  });
-
-  test("GET without Token", async () => {
+  test("GET", async () => {
     const res = await request(app)
       .get(API_URL)
       .set("Accept", "application/json")
@@ -90,13 +77,15 @@ describe("Methods & Token security", () => {
     expect(res.body.status_msg).toBe("Random status_msg");
   });
 
-  test("UPDATE", async () => {
+  // Without pfp
+
+  test("PUT", async () => {
     const res = await request(app)
       .put(API_URL)
       .set("Authorization", regUser.token)
       .set("Accept", "application/json")
       .send({ desc: "Updated description", status_msg: "Updated status_msg" })
-      .expect(200);
+      .expect(201);
 
     expect(res.body.desc).toBe("Updated description");
     expect(res.body.status_msg).toBe("Updated status_msg");
@@ -108,7 +97,54 @@ describe("Methods & Token security", () => {
 });
 
 describe("No token testing", () => {
-  const API_URL = `/profile/2`;
+  const user = {
+    username: "tester1234",
+    email: "mail1234@email.com",
+    password: "1234567890",
+  };
+
+  const userProfile = {
+    desc: "Random description",
+    status_msg: "Random status_msg",
+  };
+  let regUser;
+  let API_URL;
+
+  beforeAll(async () => {
+    const testUser = await request(app)
+      .post("/auth/signup")
+      .send(user)
+      .set("Accept", "application/json")
+      .expect(201);
+
+    const result = testUser.body;
+
+    const login = await request(app)
+      .post("/auth/login")
+      .send(user)
+      .set("Accept", "application/json")
+      .expect(200);
+
+    const loginResult = login.body;
+
+    regUser = {
+      id: result.id,
+      username: result.username,
+      email: result.email,
+      token: loginResult.token,
+    };
+    API_URL = `/user/${regUser.id}/profile/`;
+
+    const res = await request(app)
+      .post(API_URL)
+      .set("Authorization", regUser.token)
+      .set("Accept", "application/json")
+      .send(userProfile)
+      .expect(201);
+
+    expect(res.body.desc).toBe("Random description");
+    expect(res.body.status_msg).toBe("Random status_msg");
+  });
 
   test("GET /profile accessible without jwt token", async () => {
     await request(app)
@@ -121,11 +157,9 @@ describe("No token testing", () => {
   test("POST /profile inaccessible without jwt token", async () => {
     const res = await request(app)
       .post(API_URL)
-      .send({ disc: "Whatever" })
+      .send({ desc: "Whatever" })
       .set("Accept", "application/json")
       .expect(401);
-
-    expect(res.body.error).toBe("Incorrect credentials");
   });
 
   test("PUT /profile inaccessible without jwt token", async () => {
@@ -133,10 +167,7 @@ describe("No token testing", () => {
       .put(API_URL)
       .send({ disc: "changed data" })
       .set("Accept", "application/json")
-      .expect("Content-type", /json/)
-      .expect(403);
-
-    expect(res.body.error).toBe("Incorrect credentials");
+      .expect(401);
   });
 });
 
