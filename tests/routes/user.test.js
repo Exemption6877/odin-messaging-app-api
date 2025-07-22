@@ -6,8 +6,8 @@ const request = require("supertest");
 
 describe("Methods", () => {
   const user = {
-    username: "testeruser",
-    email: "testeruser@email.com",
+    username: "testeruser1",
+    email: "testeruser33@email.com",
     password: "1234567890",
   };
 
@@ -48,22 +48,43 @@ describe("Methods", () => {
       .set("Accept", "application/json")
       .expect(200);
 
-    expect(res.body.username).toBe("testeruser");
-    expect(res.body.email).toBe("testeruser@email.com");
+    expect(res.body.username).toBe("testeruser1");
+    expect(res.body.email).toBe("testeruser33@email.com");
     expect(res.body.password.length).toBeGreaterThan(0);
   });
 
   test("PUT", async () => {
     const res = await request(app)
       .put(API_URL)
-      .send({ username: "changedname", email: "changed@email.com" })
+      .send({
+        username: "changedname22",
+        email: "changed22@email.com",
+        password: "74564585889",
+        confirmPassword: "1234567890",
+      })
       .set("Authorization", regUser.token)
       .set("Accept", "application/json")
       .expect(201);
 
-    expect(res.body.username).toBe("changedname");
-    expect(res.body.email).toBe("changed@email.com");
+    expect(res.body.username).toBe("changedname22");
+    expect(res.body.email).toBe("changed22@email.com");
     expect(res.body.password.length).toBeGreaterThan(0);
+  });
+
+  test("PUT with wrong confirmPassword", async () => {
+    const res = await request(app)
+      .put(API_URL)
+      .send({
+        username: "changedname23",
+        email: "changed23@email.com",
+        password: "74564585889",
+        confirmPassword: "1234567890",
+      })
+      .set("Authorization", regUser.token)
+      .set("Accept", "application/json")
+      .expect(401);
+
+    expect(res.body.error).toBe("Incorrect password");
   });
 
   afterAll(async () => {

@@ -18,7 +18,7 @@ async function signUp(user) {
 
 async function findById(id) {
   try {
-    return await prisma.user.findUnique({ id });
+    return await prisma.user.findUnique({ where: { id } });
   } catch (err) {
     throw new Error(`DB: could not find user by id. Error:${err}`);
   }
@@ -40,4 +40,19 @@ async function findByUsername(username) {
   }
 }
 
-module.exports = { signUp, findById, findByEmail, findByUsername };
+async function updateUser(user) {
+  try {
+    return await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        username: user.username,
+        email: user.email,
+        password: user.password,
+      },
+    });
+  } catch (err) {
+    throw new Error(`DB: could not update user. Error:${err}`);
+  }
+}
+
+module.exports = { signUp, findById, findByEmail, findByUsername, updateUser };
