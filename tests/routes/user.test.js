@@ -2,10 +2,12 @@ const app = require("../../app");
 const prisma = require("../../prisma/prisma");
 const request = require("supertest");
 
+// test route for getting wrong user with jwt token
+
 describe("Methods", () => {
   const user = {
-    username: "tester",
-    email: "tester@email.com",
+    username: "testeruser",
+    email: "testeruser@email.com",
     password: "1234567890",
   };
 
@@ -17,27 +19,37 @@ describe("Methods", () => {
       .post("/auth/signup")
       .send(user)
       .set("Accept", "application/json")
-      .expect(200);
+      .expect(201);
 
     const result = testUser.body;
+
+    const login = await request(app)
+      .post("/auth/login")
+      .send(user)
+      .set("Accept", "application/json")
+      .expect(200);
+
+    const loginResult = login.body;
+
     regUser = {
       id: result.id,
       username: result.username,
       email: result.email,
-      token: result.token,
+      token: loginResult.token,
     };
+    console.log(regUser.token);
     API_URL = `/user/${regUser.id}`;
   });
 
   test("GET by ID", async () => {
     const res = await request(app)
-      .get(API_URL)
+      .get(`${API_URL}`)
       .set("Authorization", regUser.token)
       .set("Accept", "application/json")
       .expect(200);
 
-    expect(res.body.username).toBe("tester");
-    expect(res.body.email).toBe("tester@email.com");
+    expect(res.body.username).toBe("testeruser");
+    expect(res.body.email).toBe("testeruser@email.com");
     expect(res.body.password.length).toBeGreaterThan(0);
   });
 
