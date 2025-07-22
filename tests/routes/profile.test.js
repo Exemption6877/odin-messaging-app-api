@@ -17,8 +17,8 @@ describe("General route tests", () => {
 
 describe("Methods & Token security", () => {
   const user = {
-    username: "tester",
-    email: "mail@email.com",
+    username: "tester1234",
+    email: "mail1234@email.com",
     password: "1234567890",
   };
 
@@ -33,16 +33,25 @@ describe("Methods & Token security", () => {
       .post("/auth/signup")
       .send(user)
       .set("Accept", "application/json")
-      .expect(200);
+      .expect(201);
 
     const result = testUser.body;
+
+    const login = await request(app)
+      .post("/auth/login")
+      .send(user)
+      .set("Accept", "application/json")
+      .expect(200);
+
+    const loginResult = login.body;
+
     regUser = {
       id: result.id,
       username: result.username,
       email: result.email,
-      token: result.token,
+      token: loginResult.token,
     };
-    API_URL = `/profile/${regUser.id}`;
+    API_URL = `/user/${regUser.id}/profile/`;
   });
 
   // Without pfp
@@ -114,8 +123,7 @@ describe("No token testing", () => {
       .post(API_URL)
       .send({ disc: "Whatever" })
       .set("Accept", "application/json")
-      .expect("Content-type", /json/)
-      .expect(403);
+      .expect(401);
 
     expect(res.body.error).toBe("Incorrect credentials");
   });

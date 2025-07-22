@@ -18,7 +18,19 @@ async function getProfile(req, res) {
 
 async function postProfile(req, res) {
   try {
-    const { desc, status_msg, pfp, userId } = req.body;
+    const { desc, status_msg, pfp } = req.body;
+    const userId = Number(req.params.userId);
+
+    const parseData = {
+      desc,
+      status_msg,
+      pfp,
+      userId,
+    };
+
+    const result = await db.profile.createProfile(parseData);
+
+    res.status(201).json(result);
   } catch (err) {
     res.status(500).json({ error: "Could not create profile" });
   }

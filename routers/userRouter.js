@@ -9,10 +9,13 @@ const userController = require("../controllers/userController");
 
 // Current plan
 
+// postProfile will be called after first login
 const profileRouter = require("./profileRouter");
 
 userRouter.use("/:userId/profile", profileRouter);
 // userRouter.use("/:userId/message", messageRouter);
+
+// group will be most likely separate route
 // userRouter.use("/:userId/group", groupRouter)
 
 userRouter.get(
