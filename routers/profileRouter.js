@@ -4,6 +4,11 @@ const passport = require("passport");
 const profileRouter = Router({ mergeParams: true });
 const profileController = require("../controllers/profileController");
 
+// need GET ALL
+// need GET BY PARTIAL MATCH
+
+// Do query
+
 profileRouter.get("/", profileController.getProfile);
 profileRouter.post(
   "/",

@@ -73,4 +73,7 @@ const userRouter = require("./routers/userRouter");
 
 app.use("/user", userRouter);
 
+const profilesRouter = require("./routers/profilesRouter");
+app.use("/profiles", profilesRouter);
+
 module.exports = app;

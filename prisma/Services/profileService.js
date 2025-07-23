@@ -49,4 +49,29 @@ async function updateProfile(profile) {
   }
 }
 
-module.exports = { findById, createProfile, updateProfile };
+async function partialFind(username) {
+  try {
+    return await prisma.profile.findMany({
+      where: {
+        user: {
+          username: {
+            contains: username,
+            mode: "insensitive",
+          },
+        },
+      },
+      include: {
+        user: {
+          select: {
+            username: true,
+            status: true,
+          },
+        },
+      },
+    });
+  } catch (err) {
+    throw new Error(`DB: could not fetch profiles. Error:${err}`);
+  }
+}
+
+module.exports = { findById, createProfile, updateProfile, partialFind };

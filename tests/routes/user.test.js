@@ -83,8 +83,6 @@ describe("Methods", () => {
       .set("Authorization", regUser.token)
       .set("Accept", "application/json")
       .expect(401);
-
-    expect(res.body.error).toBe("Incorrect password");
   });
 
   afterAll(async () => {

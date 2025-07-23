@@ -57,4 +57,20 @@ async function updateProfile(req, res) {
   }
 }
 
-module.exports = { getProfile, postProfile, updateProfile };
+async function partialFind(req, res) {
+  try {
+    const { username } = req.query;
+
+    const result = await db.profile.partialFind(username);
+
+    if (result.length === 0) {
+      res.status(404).json({ error: "No profiles found" });
+    }
+
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ error: "Could not find profiles" });
+  }
+}
+
+module.exports = { getProfile, postProfile, updateProfile, partialFind };
