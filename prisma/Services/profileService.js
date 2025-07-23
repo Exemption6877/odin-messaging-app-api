@@ -74,4 +74,27 @@ async function partialFind(username) {
   }
 }
 
-module.exports = { findById, createProfile, updateProfile, partialFind };
+async function getAll() {
+  try {
+    return await prisma.profile.findMany({
+      include: {
+        user: {
+          select: {
+            username: true,
+            status: true,
+          },
+        },
+      },
+    });
+  } catch (err) {
+    throw new Error(`DB: could not fetch profiles. Error:${err}`);
+  }
+}
+
+module.exports = {
+  findById,
+  createProfile,
+  updateProfile,
+  partialFind,
+  getAll,
+};

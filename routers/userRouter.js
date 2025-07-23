@@ -7,6 +7,8 @@ const verifyToken = require("../middleware/verifyToken");
 
 const userController = require("../controllers/userController");
 
+// i will do profile search here
+
 // Current plan
 
 // postProfile will be called after first login

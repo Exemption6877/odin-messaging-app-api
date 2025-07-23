@@ -61,10 +61,15 @@ async function partialFind(req, res) {
   try {
     const { username } = req.query;
 
-    const result = await db.profile.partialFind(username);
+    let result;
+    if (!username) {
+      result = await db.profile.getAll();
+    } else {
+      result = await db.profile.partialFind(username);
+    }
 
     if (result.length === 0) {
-      res.status(404).json({ error: "No profiles found" });
+      return res.status(404).json({ error: "No profiles found" });
     }
 
     res.status(200).json(result);
