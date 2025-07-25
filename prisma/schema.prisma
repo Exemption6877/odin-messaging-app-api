@@ -45,13 +45,13 @@ model Message {
   image String?
 
   authorId Int
-  author User @relation("Author", fields: [authorId], references: [id])
+  author User @relation("Author", fields: [authorId], references: [id], onDelete: Cascade)
 
   receiverId Int?
-  receiver User? @relation("Receiver", fields: [receiverId], references: [id])
+  receiver User? @relation("Receiver", fields: [receiverId], references: [id], onDelete: Cascade)
 
   groupId Int?
-  group Group? @relation(fields: [groupId], references: [id])
+  group Group? @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
 }
 
