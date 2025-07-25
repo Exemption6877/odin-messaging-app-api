@@ -56,6 +56,7 @@ describe("Methods & Token security", () => {
   });
 
   test("POST", async () => {
+    
     const res = await request(app)
       .post(API_URL)
       .set("Authorization", regUser.token)

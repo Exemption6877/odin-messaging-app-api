@@ -15,6 +15,8 @@ const userController = require("../controllers/userController");
 const profileRouter = require("./profileRouter");
 
 userRouter.use("/:userId/profile", profileRouter);
+
+// Better to do separate route, as  message/to= id
 // userRouter.use("/:userId/message", messageRouter);
 
 // group will be most likely separate route
