@@ -18,7 +18,7 @@ async function createMessage(message) {
 
 async function getMessages(firstUser, secondUser) {
   try {
-    return await prisma.message.findFirst({
+    return await prisma.message.findMany({
       where: {
         OR: [
           {
@@ -45,7 +45,7 @@ async function editMessage(message) {
       where: { id: message.id },
       data: {
         text: message.text,
-        image: message.text,
+        image: message.image,
       },
     });
   } catch (err) {

@@ -52,7 +52,7 @@ model Message {
 
   groupId Int?
   group Group? @relation(fields: [groupId], references: [id], onDelete: Cascade)
-
+  createdAt DateTime @default(now())
 }
 
 model Group {

@@ -66,14 +66,15 @@ app.get("/", (req, res) => {
 });
 
 const authRouter = require("./routers/authRouter");
-
 app.use("/auth", authRouter);
 
 const userRouter = require("./routers/userRouter");
-
 app.use("/user", userRouter);
 
 const profilesRouter = require("./routers/profilesRouter");
 app.use("/profiles", profilesRouter);
+
+const messageRouter = require("./routers/messagesRouter");
+app.use("/message", messageRouter);
 
 module.exports = app;
