@@ -56,7 +56,6 @@ describe("Methods & Token security", () => {
   });
 
   test("POST", async () => {
-    
     const res = await request(app)
       .post(API_URL)
       .set("Authorization", regUser.token)
@@ -172,11 +171,109 @@ describe("No token testing", () => {
   });
 });
 
-// describe("SUPABASE", () => {
-//   test("POST SUPABASE creating user folder");
-//   //Mocks
-//   test("GET SUPABASE profile picture");
-//   test("POST SUPABASE profile picture");
-//   test("UPDATE SUPABASE profile picture");
-//   test("DELETE SUPABASE profile picture");
-// });
+describe("Friends", () => {
+  const user1 = {
+    username: "friend1",
+    email: "friend1@email.com",
+    password: "1234567890",
+  };
+  const user2 = {
+    username: "friend2",
+    email: "friend2@email.com",
+    password: "1234567890",
+  };
+
+  let user1info, user2info;
+  beforeAll(async () => {
+    const user1signup = await request(app)
+      .post("/auth/signup")
+      .send(user1)
+      .set("Accept", "application/json");
+
+    const user1login = await request(app)
+      .post("/auth/login")
+      .send(user1)
+      .set("Accept", "application/json");
+
+    user1info = {
+      id: user1signup.body.id,
+      token: user1login.body.token,
+    };
+
+    const user2signup = await request(app)
+      .post("/auth/signup")
+      .send(user2)
+      .set("Accept", "application/json");
+
+    const user2login = await request(app)
+      .post("/auth/login")
+      .send(user2)
+      .set("Accept", "application/json");
+
+    user2info = {
+      id: user2signup.body.id,
+      token: user2login.body.token,
+    };
+  });
+
+  test("Create User 1 Profile", async () => {
+    await request(app)
+      .post(`/user/${user1info.id}/profile`)
+      .set("Authorization", user1info.token)
+
+      .send({
+        desc: "random",
+        status_msg: "random msg",
+        userId: user1info.id,
+      })
+      .set("Accept", "application/json")
+      .expect(201);
+  });
+  test("Create User 2 Profile", async () => {
+    await request(app)
+      .post(`/user/${user2info.id}/profile`)
+      .set("Authorization", user2info.token)
+      .send({
+        desc: "random",
+        status_msg: "random msg",
+        userId: user2info.id,
+      })
+      .set("Accept", "application/json")
+      .expect(201);
+  });
+
+  test("User 1 adds user 2", async () => {
+    await request(app)
+      .post(`/user/${user1info.id}/profile/friends/${user2info.id}`)
+      .set("Authorization", user1info.token)
+      .set("Accept", "application/json")
+      .expect(201);
+  });
+
+  test("User 1 has friend", async () => {
+    const res = await request(app)
+      .get(`/user/${user1info.id}/profile/friends`)
+      .set("Authorization", user1info.token)
+      .set("Accept", "application/json")
+      .expect(200);
+
+    console.log(res.body);
+
+    expect(res.body[0].username).toBe("friend2");
+  });
+
+  test("User 2 has friend", async () => {
+    const res = await request(app)
+      .get(`/user/${user2info.id}/profile/friends`)
+      .set("Authorization", user2info.token)
+      .set("Accept", "application/json")
+      .expect(200);
+
+    expect(res.body[0].username).toBe("friend1");
+  });
+
+  afterAll(async () => {
+    await prisma.user.deleteMany({ where: { email: user1.email } });
+    await prisma.user.deleteMany({ where: { email: user2.email } });
+  });
+});

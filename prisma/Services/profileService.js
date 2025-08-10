@@ -91,10 +91,69 @@ async function getAll() {
   }
 }
 
+async function addFriend(userId, friendId) {
+  try {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        friends: {
+          connect: {
+            id: friendId,
+          },
+        },
+      },
+    });
+
+    await prisma.user.update({
+      where: { id: friendId },
+      data: {
+        friends: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
+    });
+  } catch (err) {
+    throw new Error(`DB: could not add friend. Error:${err}`);
+  }
+}
+
+async function allFriends(userId) {
+  try {
+    return await prisma.user.findMany({
+      where: {
+        OR: [
+          { friends: { some: { id: userId } } },
+          { friendOf: { some: { id: userId } } },
+        ],
+      },
+      select: {
+        id: true,
+        username: true,
+        createdAt: true,
+        status: true,
+        role: true,
+        profile: {
+          select: {
+            desc: true,
+            pfp: true,
+            status_msg: true,
+          },
+        },
+      },
+    });
+  } catch (err) {
+    throw new Error(`DB: could not fetch profiles. Error: ${err}`);
+  }
+}
+
 module.exports = {
   findById,
   createProfile,
   updateProfile,
   partialFind,
   getAll,
+  addFriend,
+  allFriends,
 };

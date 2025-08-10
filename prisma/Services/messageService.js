@@ -61,4 +61,29 @@ async function getMessageById(id) {
   }
 }
 
-module.exports = { createMessage, getMessages, editMessage, getMessageById };
+async function getAllUserMessages(userId) {
+  try {
+    return await prisma.message.findMany({
+      where: {
+        OR: [
+          {
+            authorId: userId,
+          },
+          {
+            receiverId: userId,
+          },
+        ],
+      },
+    });
+  } catch (err) {
+    throw new Error(`DB: could not fetch messages. Error:${err}`);
+  }
+}
+
+module.exports = {
+  createMessage,
+  getMessages,
+  editMessage,
+  getMessageById,
+  getAllUserMessages,
+};

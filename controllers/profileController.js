@@ -1,3 +1,4 @@
+const { message } = require("../prisma/prisma");
 const db = require("../prisma/queries");
 
 async function getProfile(req, res) {
@@ -78,4 +79,48 @@ async function partialFind(req, res) {
   }
 }
 
-module.exports = { getProfile, postProfile, updateProfile, partialFind };
+async function addFriend(req, res) {
+  try {
+    const userId = Number(req.user.id);
+    const profileId = Number(req.params.profileId);
+
+    if (userId === profileId) {
+      return res
+        .status(400)
+        .json({ error: "You cannot add yourself as a friend" });
+    }
+
+    const chosenProfile = await db.profile.findById(profileId);
+
+    // if (!chosenProfile) {
+    //   return res.status(404).json({ error: "Profile not found" });
+    // }
+
+    await db.profile.addFriend(userId, profileId);
+
+    return res.status(201).json({ message: "User has been added to friends" });
+  } catch (err) {
+    res.status(500).json({ error: "Could not add friend" });
+  }
+}
+
+async function getFriends(req, res) {
+  try {
+    const userId = Number(req.user.id);
+
+    const result = await db.profile.allFriends(userId);
+
+    return res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ error: "Could not find friends" });
+  }
+}
+
+module.exports = {
+  getProfile,
+  postProfile,
+  updateProfile,
+  partialFind,
+  addFriend,
+  getFriends,
+};

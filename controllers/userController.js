@@ -69,6 +69,7 @@ async function updateUser(req, res) {
   }
 }
 
+
 module.exports = { getUser, updateUser };
 
 // const { prevPassword } = req.body; // must match existing for changes

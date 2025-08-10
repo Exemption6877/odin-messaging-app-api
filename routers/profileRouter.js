@@ -4,10 +4,6 @@ const passport = require("passport");
 const profileRouter = Router({ mergeParams: true });
 const profileController = require("../controllers/profileController");
 
-// need GET ALL
-// need GET BY PARTIAL MATCH
-
-// Do query
 
 profileRouter.get("/", profileController.getProfile);
 profileRouter.post(
@@ -20,6 +16,18 @@ profileRouter.put(
   "/",
   passport.authenticate("jwt", { session: false }),
   profileController.updateProfile
+);
+
+profileRouter.post(
+  "/friends/:profileId",
+  passport.authenticate("jwt", { session: false }),
+  profileController.addFriend
+);
+
+profileRouter.get(
+  "/friends",
+  passport.authenticate("jwt", { session: false }),
+  profileController.getFriends
 );
 
 module.exports = profileRouter;
