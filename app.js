@@ -2,6 +2,7 @@ const express = require("express");
 
 const app = express();
 app.use(express.json());
+const cors = require("cors");
 
 require("dotenv").config();
 
@@ -11,6 +12,8 @@ const JwtStrategy = require("passport-jwt").Strategy,
 const LocalStrategy = require("passport-local");
 const bcrypt = require("bcrypt");
 const db = require("./prisma/queries");
+
+app.use(cors());
 
 passport.use(
   new LocalStrategy(
