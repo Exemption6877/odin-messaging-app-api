@@ -27,4 +27,10 @@ messageRouter.post(
   messageController.postMessage
 );
 
+messageRouter.get(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  messageController.getAllMessages
+);
+
 module.exports = messageRouter;

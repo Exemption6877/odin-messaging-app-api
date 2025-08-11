@@ -82,4 +82,26 @@ async function getSpecificMessage(req, res) {
   }
 }
 
-module.exports = { getMessages, postMessage, editMessage, getSpecificMessage };
+async function getAllMessages(req, res) {
+  try {
+    const userId = Number(req.user.id);
+
+    const result = await db.message.getAllUserMessages(userId);
+
+    if (result.length === 0) {
+      return res.status(200).json({ message: "No entries yet" });
+    }
+
+    return res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ error: "Could not get messages" });
+  }
+}
+
+module.exports = {
+  getMessages,
+  postMessage,
+  editMessage,
+  getSpecificMessage,
+  getAllMessages,
+};
