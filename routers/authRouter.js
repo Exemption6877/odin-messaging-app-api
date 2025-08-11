@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const { body } = require("express-validator");
+const db = require("../prisma/queries");
 
 const authRouter = Router();
 const authController = require("../controllers/authController");
@@ -28,7 +29,19 @@ authRouter.post("/login", (req, res, next) => {
 
     const token = issueToken(user);
 
-    return res.status(200).json({ message: "Login successful", token });
+    const passUser = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      createdAt: user.createdAt,
+      status: user.status,
+      role: user.role,
+    };
+
+    console.log(user);
+    return res
+      .status(200)
+      .json({ message: "Login successful", token, passUser });
   })(req, res, next);
 });
 
